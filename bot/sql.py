@@ -23,7 +23,8 @@ class Db:
 
     def add_user(self, user_id, name):
         with self.connection:
-            return self.cursor.execute('INSERT INTO users VALUES (?, ?, 0, 0, ?, 0)', (user_id, None, name))
+            if name:
+                return self.cursor.execute('INSERT INTO users VALUES (?, ?, 0, 0, 0, ?)', (user_id, name, None))
 
     def set_type_to_user(self, user_id, type_):
         with self.connection:
@@ -52,7 +53,7 @@ class Db:
 
     def create_game(self, user_id):
         with self.connection:
-            return self.cursor.execute('INSERT INTO games VALUES (?, 1, "0000000000")',(user_id,))
+            return self.cursor.execute('INSERT INTO games VALUES (?, 1, "0000000000")', (user_id,))
 
     def get_game(self, user_id):
         with self.connection:
@@ -67,7 +68,7 @@ class Db:
                     type_ = 'O'
                 else:
                     type_ = 'X'
-            field = str(int(field[0])+1) + field[1:pos] + type_ + field[pos + 1:]
+            field = str(int(field[0]) + 1) + field[1:pos] + type_ + field[pos + 1:]
             self.cursor.execute('UPDATE games SET field = ? WHERE user1 = ?', (field, user_id))
             return field
 

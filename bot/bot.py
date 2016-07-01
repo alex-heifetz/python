@@ -164,14 +164,19 @@ def repeat_all_messages(message):
 
 @bot.message_handler(commands=["start"])
 def repeat_all_messages(message):
+    user_id = message.chat.id
     db = Db('db.db')
-    user = db.get_user_by_id(message.chat.id)
+    user = db.get_user_by_id(user_id)
     if not user:
-        bot.send_message(message.chat.id, "Вам нужно зарегистрироваться командой: /register")
+        bot.send_message(user_id, "Вам нужно зарегистрироваться командой: /register")
     else:
-        markup = types.ReplyKeyboardMarkup()
-        markup.row('X', 'O')
-        bot.send_message(message.chat.id, "Выбирите Х или О:", reply_markup=markup)
+        game_ = db.get_game(user_id)
+        if not game_:
+            markup = types.ReplyKeyboardMarkup()
+            markup.row('X', 'O')
+            bot.send_message(user_id, "Выбирите Х или О:", reply_markup=markup)
+        else:
+            game(message)
 
 
 @bot.message_handler(commands=["end"])
@@ -179,7 +184,10 @@ def end_game(message):
     user_id = message.chat.id
     db = Db('db.db')
     user = db.get_user_by_id(user_id)
-    if user[1]:
+    if not user:
+        return False
+    print user
+    if user[5]:
         markup = types.ReplyKeyboardHide()
         db.set_type_to_user(user_id, None)
         db.end_game(user_id)
@@ -240,15 +248,16 @@ def repeat_all_messages(message):
                     bot.send_message(user_id, field, parse_mode='HTML')
                 else:
                     bot.send_message(user_id, 'Так сходить нельзя')
-        else:
-            markup = types.ReplyKeyboardHide()
-            if message.text in ['X', 'O']:
-                db.set_type_to_user(user_id, message.text)
-                bot.send_message(user_id, 'Вы выбрали ' + str(message.text) + '!', reply_markup=markup)
-            db.create_game(user_id)
-            game(message)
+            else:
+                markup = types.ReplyKeyboardHide()
+                if message.text in ['X', 'O']:
+                    db.set_type_to_user(user_id, message.text)
+                    bot.send_message(user_id, 'Вы выбрали ' + str(message.text) + '!', reply_markup=markup)
+                db.create_game(user_id)
+                game(message)
 
 
 if __name__ == '__main__':
     # bot.remove_webhook()
+    print "Бот работает!"
     bot.polling(none_stop=True)

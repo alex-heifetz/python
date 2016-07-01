@@ -1,8 +1,3 @@
-CREATE TABLE sqlite_sequence
-(
-    name TEXT,
-    seq TEXT
-);
 CREATE TABLE games
 (
     user1 INTEGER PRIMARY KEY NOT NULL,
@@ -20,3 +15,4 @@ CREATE TABLE users
     type INTEGER DEFAULT NULL
 );
 CREATE UNIQUE INDEX users_id_uindex ON users (id);
+INSERT INTO users VALUES (1, 'HeifetzBot', 0, 0, 0, NULL);

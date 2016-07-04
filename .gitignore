@@ -1,3 +1,7 @@
 /.idea/
+
+*.pyc
+
 /bot/tokens.py
 /bot/db.db
+

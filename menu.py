@@ -62,8 +62,12 @@ for item in re.compile(reg).findall(html):
             head = item
             continue
 
-end = items[pos.index(html.find(head))+1]
-html = html[html.find(head)+len(head):html.find(end)]
+if head:
+    if pos[-1] > html.find(head):
+        end = items[pos.index(html.find(head))+1]
+        html = html[html.find(head)+len(head):html.find(end)]
+    else:
+        html = html[html.find(head)+len(head):]
 
 html = re.sub(r'\n?</?tr>', '', html)
 html = re.sub(r'<td>', '', html)

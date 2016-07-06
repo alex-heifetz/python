@@ -5,6 +5,9 @@ import tokens
 from telebot import types
 from sql import Db
 import random
+import os
+
+db_dir = os.path.dirname(os.path.abspath(__file__)) + "/db.db"
 
 
 def draw_field(field):
@@ -80,7 +83,7 @@ def check_can_win_lose(field, type_):
 
 
 def bot_step(user_id, field):
-    db = Db('db.db')
+    db = Db(db_dir)
     user = str(db.get_user_by_id(user_id)[1])
     type_ = other_type(user)
     right_step = check_can_win_lose(field, type_)
@@ -137,7 +140,7 @@ def repeat_all_messages(message):
 
 @bot.message_handler(commands=["register"])
 def repeat_all_messages(message):
-    db = Db('db.db')
+    db = Db(db_dir)
     user = db.get_user_by_id(message.chat.id)
     if not user:
         if message.chat.username:
@@ -153,7 +156,7 @@ def repeat_all_messages(message):
 
 @bot.message_handler(commands=["top"])
 def repeat_all_messages(message):
-    db = Db('db.db')
+    db = Db(db_dir)
     res = db.get_top_10()
     if res:
         str_ = '<strong>Имя, побед/всего, процент побед:</strong>\n'
@@ -170,7 +173,7 @@ def repeat_all_messages(message):
 @bot.message_handler(commands=["start"])
 def repeat_all_messages(message):
     user_id = message.chat.id
-    db = Db('db.db')
+    db = Db(db_dir)
     user = db.get_user_by_id(user_id)
     if not user:
         bot.send_message(user_id, "Вам нужно зарегистрироваться командой: /register")
@@ -187,7 +190,7 @@ def repeat_all_messages(message):
 @bot.message_handler(commands=["end"])
 def end_game(message):
     user_id = message.chat.id
-    db = Db('db.db')
+    db = Db(db_dir)
     user = db.get_user_by_id(user_id)
     if not user:
         return False
@@ -198,10 +201,9 @@ def end_game(message):
         bot.send_message(message.chat.id, "Игра окончена!", reply_markup=markup)
 
 
-# @bot.message_handler(commands=["game"])
 def game(message):
     user_id = message.chat.id
-    db = Db('db.db')
+    db = Db(db_dir)
     user = db.get_user_by_id(user_id)
     if user[1]:
         markup = types.ReplyKeyboardMarkup()
@@ -214,7 +216,7 @@ def game(message):
 @bot.message_handler(content_types=["text"])
 def repeat_all_messages(message):
     user_id = message.chat.id
-    db = Db('db.db')
+    db = Db(db_dir)
     user = db.get_user_by_id(user_id)
     if user:
         if user[1]:

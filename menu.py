@@ -54,13 +54,19 @@ month = months[int(datetime.date.today().month) - 1]
 reg = r'<tr>\n((?:.|\n)*?)\n</tr>'
 pos = []
 items = []
+head = False
+
 for item in re.compile(reg).findall(html):
     if not ':' in item and '<strong>' in item:
         pos.append(html.find(item))
         items.append(item)
-        if (str(day) in item or str(int(day)+1) in item) and month in item:
-            head = item
-            continue
+        if month in item:
+            if str(day) in item:
+                head = item
+                continue
+            elif not head and str(int(day)+1) in item:
+                head = item
+                continue
 
 if head:
     if pos[-1] > html.find(head):

@@ -140,7 +140,12 @@ def repeat_all_messages(message):
     db = Db('db.db')
     user = db.get_user_by_id(message.chat.id)
     if not user:
-        db.add_user(message.chat.id, message.chat.username)
+        if message.chat.username:
+            db.add_user(message.chat.id, message.chat.username)
+        elif message.chat.first_name:
+            db.add_user(message.chat.id, message.chat.first_name)
+        else:
+            bot.send_message(message.chat.id, "У Вас нету имени, бот не может Вас зарегистрировать!")
         bot.send_message(message.chat.id, "Поздравляем с регистрацией!")
     else:
         bot.send_message(message.chat.id, "Вы уже зарегистрированы!")
@@ -186,7 +191,6 @@ def end_game(message):
     user = db.get_user_by_id(user_id)
     if not user:
         return False
-    print user
     if user[5]:
         markup = types.ReplyKeyboardHide()
         db.set_type_to_user(user_id, None)

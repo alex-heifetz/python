@@ -8,6 +8,7 @@ import sys
 from termcolor import colored
 
 is_html = False
+is_bot = False
 
 if 1 == len(sys.argv):
     print colored('Нужно указать вариант ланча (250 или 300)', 'green')
@@ -21,7 +22,10 @@ else:
     exit()
 
 if 3 == len(sys.argv):
-    is_html = True
+    if 'html' == sys.argv[2]:
+        is_html = True
+    elif 'bot' == sys.argv[2]:
+        is_bot = True
 
 
 html = response.read()
@@ -87,19 +91,24 @@ html = re.sub(r'  ', ' ', html)
 
 
 if is_html:
-    # print '<strong class="date">' + day + ' ' + month + '</strong><br />'
     print html
     exit()
 
-print colored("\n" + day + ' ' + month, 'yellow')
+if is_bot:
+    print "\n" + day + ' ' + month
+else:
+    print colored("\n" + day + ' ' + month, 'yellow')
 
 html = re.sub('<.*?>', '', html)
 html = re.sub('&laquo;', '«', html)
 html = re.sub('&raquo;', '»', html)
 html = re.sub('(\d)([мг])', '\g<1> \g<2>', html)
 html = re.sub('\n (\d [мг])', ' - \g<1>', html)
-html = re.sub('([А-Яа-яЁёЮюЫыРрТт ]+:)', colored('\n\g<1> ', 'green'), html)
-html = re.sub('\n+', "\n", html)
+if not is_bot:
+    html = re.sub('([А-Яа-яЁёЮюЫыРрТт ]+:)', colored('\n\g<1> ', 'green'), html)
+    html = re.sub('\n+', "\n", html)
+else:
+    html = re.sub('([А-Яа-яЁёЮюЫыРрТт ]+:)', '\n\g<1> ', html)
 
 print html[1:]
 

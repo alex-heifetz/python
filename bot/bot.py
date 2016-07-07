@@ -6,8 +6,10 @@ from telebot import types
 from sql import Db
 import random
 import os
+import subprocess
 
 db_dir = os.path.dirname(os.path.abspath(__file__)) + "/db.db"
+dir = os.path.dirname(os.path.abspath(__file__))
 
 
 def draw_field(field):
@@ -123,6 +125,20 @@ def who_win(field):
 
 
 bot = telebot.TeleBot(tokens.token)
+
+
+@bot.message_handler(commands=["menu2"])
+def repeat_all_messages(message):
+    print dir + '/menu.py 250'
+    bot.send_message(message.chat.id, subprocess.Popen(dir + '/menu.py 250', shell=True,
+                                                       stdout=subprocess.PIPE).communicate())
+
+
+@bot.message_handler(commands=["menu3"])
+def repeat_all_messages(message):
+    print dir + '/menu.py 250'
+    bot.send_message(message.chat.id, subprocess.Popen(dir + '/menu.py 300', shell=True,
+                                                       stdout=subprocess.PIPE).communicate())
 
 
 @bot.message_handler(commands=["help"])

@@ -2,6 +2,6 @@
 
 *.pyc
 
-/bot/tokens.py
-/bot/db.db
+*/tokens.py
+*/db.db
 

@@ -1,5 +1,6 @@
 #!/usr/bin/python2.7
 # -*- coding: utf-8 -*-
+
 import telebot
 import tokens
 from telebot import types
@@ -9,9 +10,10 @@ import os
 import subprocess
 
 db_dir = os.path.dirname(os.path.abspath(__file__)) + "/db.db"
-dir = os.path.dirname(os.path.abspath(__file__))
+dir_ = os.path.dirname(os.path.abspath(__file__))
 
 
+# Был использован символ "━" но на телефоне он выглядит ужасно.
 def draw_field(field):
     str_ = '<pre>'
     str_ += '\n┏---┳---┳---┓\n'
@@ -33,32 +35,8 @@ def draw_field(field):
     return str_
 
 
-# def draw_field(field):
-#     str_ = '<pre>'
-#     str_ += '\n┏━━━┳━━━┳━━━┓\n'
-#     for i in [0, 1, 2]:
-#         for j in [1, 2, 3]:
-#             pos = i * 3 + j
-#             str_ += '┃'
-#             if '0' == field[pos]:
-#                 sym = ' '
-#             else:
-#                 sym = field[pos]
-#             str_ += ' ' + sym + ' '
-#         str_ += "┃"
-#         if 2 != i:
-#             str_ += "\n┣━━━╋━━━╋━━━┫\n"
-#         else:
-#             str_ += "\n┗━━━┻━━━┻━━━┛\n"
-#     str_ += '</pre>'
-#     return str_
-
-
 def other_type(type_):
-    if 'X' == type_:
-        return 'O'
-    else:
-        return 'X'
+    return 'O' if 'X' == type_ else 'X'
 
 
 def check_can_win_lose(field, type_):
@@ -127,20 +105,6 @@ def who_win(field):
 bot = telebot.TeleBot(tokens.token)
 
 
-@bot.message_handler(commands=["menu2"])
-def repeat_all_messages(message):
-    print dir + '/menu.py 250'
-    bot.send_message(message.chat.id, subprocess.Popen(dir + '/menu.py 250', shell=True,
-                                                       stdout=subprocess.PIPE).communicate())
-
-
-@bot.message_handler(commands=["menu3"])
-def repeat_all_messages(message):
-    print dir + '/menu.py 250'
-    bot.send_message(message.chat.id, subprocess.Popen(dir + '/menu.py 300', shell=True,
-                                                       stdout=subprocess.PIPE).communicate())
-
-
 @bot.message_handler(commands=["help"])
 def repeat_all_messages(message):
     text = '''
@@ -200,7 +164,7 @@ def repeat_all_messages(message):
             markup.row('X', 'O')
             bot.send_message(user_id, "Выбирите Х или О:", reply_markup=markup)
         else:
-            game(message)
+            cmd_game(message)
 
 
 @bot.message_handler(commands=["end"])
@@ -217,7 +181,7 @@ def end_game(message):
         bot.send_message(message.chat.id, "Игра окончена!", reply_markup=markup)
 
 
-def game(message):
+def cmd_game(message):
     user_id = message.chat.id
     db = Db(db_dir)
     user = db.get_user_by_id(user_id)
@@ -276,7 +240,7 @@ def repeat_all_messages(message):
                     db.set_type_to_user(user_id, message.text)
                     bot.send_message(user_id, 'Вы выбрали ' + str(message.text) + '!', reply_markup=markup)
                 db.create_game(user_id)
-                game(message)
+                cmd_game(message)
 
 
 if __name__ == '__main__':

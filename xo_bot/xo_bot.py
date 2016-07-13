@@ -115,23 +115,23 @@ def repeat_all_messages(message):
      - /end Принудительно заканчивает игру
      - /top Показывает топ игроков
     '''
-    bot.send_message(message.chat.id, text)
+    bot.send_message(message.from_user.id, text)
 
 
 @bot.message_handler(commands=["register"])
 def repeat_all_messages(message):
     db = Db(db_dir)
-    user = db.get_user_by_id(message.chat.id)
+    user = db.get_user_by_id(message.from_user.id)
     if not user:
-        if message.chat.username:
-            db.add_user(message.chat.id, message.chat.username)
-        elif message.chat.first_name:
-            db.add_user(message.chat.id, message.chat.first_name)
+        if message.from_user.username:
+            db.add_user(message.from_user.id, message.from_user.username)
+        elif message.from_user.first_name:
+            db.add_user(message.from_user.id, message.from_user.first_name)
         else:
-            bot.send_message(message.chat.id, "У Вас нету имени, бот не может Вас зарегистрировать!")
-        bot.send_message(message.chat.id, "Поздравляем с регистрацией!")
+            bot.send_message(message.from_user.id, "У Вас нету имени, бот не может Вас зарегистрировать!")
+        bot.send_message(message.from_user.id, "Поздравляем с регистрацией!")
     else:
-        bot.send_message(message.chat.id, "Вы уже зарегистрированы!")
+        bot.send_message(message.from_user.id, "Вы уже зарегистрированы!")
 
 
 @bot.message_handler(commands=["top"])
@@ -145,14 +145,14 @@ def repeat_all_messages(message):
                 str_ += '<b>' + str(user[0]) + '</b>: ' + str(user[1]) + '/' + str(user[2]) + ' ' + str(
                     round(user[3], 2)) + '\n'
         if '<strong>Имя, побед/всего, процент побед:</strong>\n' != str_:
-            bot.send_message(message.chat.id, str(str_), parse_mode='HTML')
+            bot.send_message(message.from_user.id, str(str_), parse_mode='HTML')
         else:
-            bot.send_message(message.chat.id, 'Статистики пока что нет')
+            bot.send_message(message.from_user.id, 'Статистики пока что нет')
 
 
 @bot.message_handler(commands=["start"])
 def repeat_all_messages(message):
-    user_id = message.chat.id
+    user_id = message.from_user.id
     db = Db(db_dir)
     user = db.get_user_by_id(user_id)
     if not user:
@@ -169,7 +169,7 @@ def repeat_all_messages(message):
 
 @bot.message_handler(commands=["end"])
 def end_game(message):
-    user_id = message.chat.id
+    user_id = message.from_user.id
     db = Db(db_dir)
     user = db.get_user_by_id(user_id)
     if not user:
@@ -178,11 +178,11 @@ def end_game(message):
         markup = types.ReplyKeyboardHide()
         db.set_type_to_user(user_id, None)
         db.end_game(user_id)
-        bot.send_message(message.chat.id, "Игра окончена!", reply_markup=markup)
+        bot.send_message(message.from_user.id, "Игра окончена!", reply_markup=markup)
 
 
 def cmd_game(message):
-    user_id = message.chat.id
+    user_id = message.from_user.id
     db = Db(db_dir)
     user = db.get_user_by_id(user_id)
     if user[1]:
@@ -190,12 +190,12 @@ def cmd_game(message):
         markup.row('1', '2', '3')
         markup.row('4', '5', '6')
         markup.row('7', '8', '9')
-        bot.send_message(message.chat.id, "Ваш ход:", reply_markup=markup)
+        bot.send_message(message.from_user.id, "Ваш ход:", reply_markup=markup)
 
 
 @bot.message_handler(content_types=["text"])
 def repeat_all_messages(message):
-    user_id = message.chat.id
+    user_id = message.from_user.id
     db = Db(db_dir)
     user = db.get_user_by_id(user_id)
     if user:

@@ -11,8 +11,6 @@ from menu import pls_parse_this_shit
 dir_ = os.path.dirname(os.path.abspath(__file__))
 www250 = 'http://www.brandmeister.spb.ru/menu/biznes-lanch#content'
 www300 = 'http://www.brandmeister.spb.ru/menu/premium-lanchi-300-rub#content'
-response250 = urllib2.urlopen(www250)
-response300 = urllib2.urlopen(www300)
 
 bot = telebot.TeleBot(tokens.token)
 
@@ -40,6 +38,8 @@ def cmd_help(message):
 
 @bot.message_handler(commands=["menu"])
 def cmd_menu(message):
+    response250 = urllib2.urlopen(www250)
+    response300 = urllib2.urlopen(www300)
     if message.text[6:]:
         price = message.text[6:]
         if '250' == price:
@@ -64,6 +64,8 @@ def repeat_all_messages(message):
 if __name__ == '__main__':
     # bot.remove_webhook()
     print "Бот работает!"
+    response250 = urllib2.urlopen(www250)
+    response300 = urllib2.urlopen(www300)
     text = pls_parse_this_shit(response250)
     bot.send_message(39153112, text, parse_mode='HTML')
     bot.send_message(217193856, text, parse_mode='HTML')
